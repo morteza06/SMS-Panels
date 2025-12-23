@@ -1,9 +1,4 @@
-export interface CreateUserDto {
-  name: string;
-  lastName: string;
-  mobile: string;
-  nId: string;
-  password: string;
-  confirmPassword: string;
-  acceptTerms: boolean;
-}
+import { z } from "zod"
+import { createUserSchema } from "./schemas/user.schema"
+
+export type CreateUserDto = z.infer<typeof createUserSchema>

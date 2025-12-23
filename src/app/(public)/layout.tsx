@@ -4,7 +4,7 @@ import Header from "@/components/layout/landing/Header";
 
 export default function LandingLayout({children } : { children: React.ReactNode}) {
     return(
-        <div className="flex h-screen">
+        <div className="flex flex-col h-screen">
             <Header />
             <main>{children}</main>
             <Footer />
