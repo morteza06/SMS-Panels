@@ -1,10 +1,10 @@
-http
+import { apiClient } from "@/lib/http/apiClient"
+import { CreateUserDto } from "../types"
 
-export const createUser = (data: any) =>
-    http.post("/api/User/CreateUser", data)
-
-export const verifyMobile = (mobile: string) =>
-    http.get("/api/User/VerifyMobile", { params:{ mobile }})
-
-export const verifyNid = (nid: string) =>
-    http.get("/api/User/VerifyNid", {params: {nid}})
+export const userApi = {
+  createUser: (data: CreateUserDto) =>
+    apiClient("/api/User/CreateUser", {
+      method: "POST",
+      body: JSON.stringify(data),
+    }),
+}
