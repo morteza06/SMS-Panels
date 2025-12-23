@@ -20,6 +20,7 @@ export function LoginForm(){
 
     return (
           <form onSubmit={form.handleSubmit(onSubmit)}>
+            
             <input className="border p-2" placeholder="نام کاربری" {...form.register("userName")} onChange={(e) => console.log("username:", e.target.value)}/>
             
             <input className="border p-2"  type="password" placeholder="رمز عبور" {...form.register("password")} onChange={(e) => console.log("username:", e.target.value)} />
