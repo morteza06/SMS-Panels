@@ -10,3 +10,8 @@ export function proxy(req: NextRequest) {
 
   return NextResponse.next()
 }
+
+// اعمال middleware روی مسیرهای مورد نظر
+export const config = {
+  matcher: ["/dashboard/:path*"],
+}
