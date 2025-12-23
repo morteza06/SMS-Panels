@@ -34,7 +34,7 @@ export default function Footer() {
 
           <ul>
             <li className="mt-12 text-center text-gray-300 text-sm">
-                © 2025 SMS Panel. همه حقوق محفوظ است.
+                © 2025 sms.aidinparsian.ir همه حقوق محفوظ است.
             </li>
           </ul>
 

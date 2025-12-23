@@ -9,7 +9,7 @@ export default function Header (){
         <header className="flex flex-col md:flex-row items-center justify-between px-4 py-3 gap-4">
             {/* Logo */}
                 <Link href="/" className="main-title md:text-xl">
-                سامانه پیامک انبوه
+                سامانه پیامکی آیدین پارسیان
                 </Link>
                 <br/>
          

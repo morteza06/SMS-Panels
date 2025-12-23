@@ -4,6 +4,7 @@
 import { ThemeProvider } from "@/components/layout/Theme-Provider"
 import localFont from 'next/font/local';
 import "@/app/globals.css"
+import ReactQueryProvider from "@/providers/ReactQueryProvider";
 
 // const Font_Vazir_B = localFont({
 //   src:"../fonts/Vazirmatn-Bold.woff2",
@@ -26,7 +27,9 @@ export default function RootLayout({ children,}:{ children: React.ReactNode }) {
           enableSystem
           disableTransitionOnChange
         >
-           <main>{children}</main>
+          <ReactQueryProvider>
+            {children}
+          </ReactQueryProvider>       
         </ThemeProvider>
       </body>
     </html>
