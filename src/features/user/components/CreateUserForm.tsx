@@ -45,16 +45,16 @@ export function CreateUserForm() {
                 قوانین را می‌پذیرم
             </label>
             <br/>
-            <button className="button bg-blue-400" type="submit" disabled={isPending}>
+            <button className="button text-blue-600" type="submit" disabled={isPending}>
                 ثبت‌نام
             </button>
             <br />
 
-            {error && <p className="bg-red-500">خطا در ثبت‌نام</p>}
-            {isSuccess && <p className="bg-green-700">ثبت‌نام موفق</p>}
+            {error && <p className="text-red-600">خطا در ثبت‌نام</p>}
+            {isSuccess && <p className="text-green-700">ثبت‌نام موفق</p>}
         </div>
         {form.formState.errors.confirmPassword && (
-            <p style={{ color: "red" }}>
+            <p className="text-red-600">
                 {form.formState.errors.confirmPassword.message}
             </p>
         )}
