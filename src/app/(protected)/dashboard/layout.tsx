@@ -8,8 +8,8 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
   return (   
     <>
-      <Sidebar />
       <Header /> 
+      <Sidebar />
       <main className="p-4">{children}</main>
       {/* <Footer /> */}
     </>

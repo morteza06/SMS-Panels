@@ -3,17 +3,17 @@
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { loginSchema } from "../schemas/login.schema"
-import { LoginDto } from "../types"
+import { LoginPayload } from "../types/login.types"
 import { useLogin } from "../hooks/useLogin"
 
 export function LoginForm(){
     const { mutate, isPending, error, isSuccess} = useLogin()
 
-    const form = useForm<LoginDto>({
+    const form = useForm<LoginPayload>({
         resolver: zodResolver(loginSchema),
     })
 
-    const onSubmit = (data: LoginDto) => {
+    const onSubmit = (data: LoginPayload) => {
         console.log("FORM DATA:", data)
         mutate(data)
     }

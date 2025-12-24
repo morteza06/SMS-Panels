@@ -1,7 +1,8 @@
-export interface LoginDto {
-    userName: string
-    password: string
+export interface LoginPayload {
+  userName: string
+  password: string
 }
+
 export interface LoginResponse {
   isAuthSuccessful: boolean
   errorMessage: string | null

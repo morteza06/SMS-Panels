@@ -1,9 +1,6 @@
-//Bussiness API
+//(axios-based)
+import { apiClient } from "@/lib/http/apiClient"
 
-import { proxyFetch } from "@/lib/http/apiClient";
-
-export const createUser = (data: any) =>
-  proxyFetch("/users", {
-    method: "POST",
-    body: JSON.stringify(data),
-  });
+export const userService = {
+  getUsers: () => apiClient.get("/api/User/GetUsers"),
+}

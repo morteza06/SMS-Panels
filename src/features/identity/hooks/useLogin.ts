@@ -1,19 +1,23 @@
 import { useMutation } from "@tanstack/react-query"
-import { identityApi } from "../api/identity.api"
-import { LoginDto, LoginResponse } from "../types"
-import { setCookie } from "nookies"
+import Cookies from "js-cookie"
+import { loginApi } from "../api/login.api"
+import { LoginPayload } from "../types/login.types"
 
-export function useLogin() {
-  return useMutation<LoginResponse, Error, LoginDto>({
-    mutationFn: async (data: LoginDto) => {
-      const res = await identityApi.login(data)
-      if (res.accessToken) {
-        setCookie(null, "access_token", res.accessToken, {
-          maxAge: 60 * 60 * 24,
-          path: "/",
-        })
+export const useLogin = () => {
+  return useMutation({
+    mutationFn: (payload: LoginPayload) => loginApi(payload),
+
+    onSuccess: (data) => {
+      if (!data.isAuthSuccessful) {
+        throw new Error(data.errorMessage ?? "Login failed")
       }
-      return res
+
+      // ذخیره توکن‌ها
+      Cookies.set("access_token", data.access_Token)
+      Cookies.set("refresh_token", data.refresh_Token)
+
+      // اینجا بعداً store را update می‌کنیم
+      console.log("Logged in:", data.userName)
     },
   })
 }

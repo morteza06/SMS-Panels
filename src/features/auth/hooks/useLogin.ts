@@ -1,21 +1,37 @@
 import { useMutation } from "@tanstack/react-query"
-import { identityApi } from "@/features/identity/api/identity.api"
-import { LoginDto } from "@/features/identity/types"
-import { setCookie } from "nookies"  // نصب با npm install nookies
+import Cookies from "js-cookie"
 
+import { identityApi } from "../api/identityApi"
+import { useAuthStore } from "@/features/auth/store/auth.store"
+
+/**
+ * useLogin
+ * --------
+ * - لاگین کاربر
+ * - ذخیره session در Auth Store
+ * - ذخیره token در Cookie برای Proxy
+ */
 export function useLogin() {
+  const setAuth = useAuthStore((state) => state.setAuth)
+
   return useMutation({
-    mutationFn: async (data: LoginDto) => {
-      const res = await identityApi.login(data)
-      if (res.accessToken) {
-        // ذخیره توکن در cookie
-        setCookie(null, "access_token", res.accessToken, {
-          maxAge: 60 * 60 * 24, // 1 روز
-          path: "/",
-        })
-        setCookie(null, "role", res.role, { maxAge: 86400, path: "/" }) 
-      }
-      return res
-    },
+    mutationFn: identityApi.login,
+
+    onSuccess: (response) => {
+      const data = response.data
+
+      if (!data.isAuthSuccessful) return
+
+      Cookies.set("access_token", data.access_Token, { path: "/" })
+      Cookies.set("refresh_token", data.refresh_Token, { path: "/" })
+
+      setAuth({
+        userName: data.userName,
+        fullName: data.fullName, // ← دقت کن N بزرگ
+        roles: data.roles,
+        accessToken: data.access_Token,
+        refreshToken: data.refresh_Token,
+      })
+    }
   })
 }

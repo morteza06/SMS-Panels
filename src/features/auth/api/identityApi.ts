@@ -1,6 +1,6 @@
 
 import { apiClient } from "@/lib/http/apiClient"
-import { LoginDto } from "../dto/login.dto"
+import { LoginDto } from "../types"
 
 
 export const identityApi = {
