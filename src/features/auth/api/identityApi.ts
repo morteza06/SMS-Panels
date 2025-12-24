@@ -1,5 +1,5 @@
 
-import { apiClient } from "@/lib/apiClient"
+import { apiClient } from "@/lib/http/apiClient"
 import { LoginDto } from "../dto/login.dto"
 
 

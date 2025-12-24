@@ -1,6 +1,6 @@
 import { useMutation } from "@tanstack/react-query"
-import { identityApi } from "../api/identity.api"
-import { LoginDto } from "../types"
+import { identityApi } from "@/features/identity/api/identity.api"
+import { LoginDto } from "@/features/identity/types"
 import { setCookie } from "nookies"  // نصب با npm install nookies
 
 export function useLogin() {
@@ -13,6 +13,7 @@ export function useLogin() {
           maxAge: 60 * 60 * 24, // 1 روز
           path: "/",
         })
+        setCookie(null, "role", res.role, { maxAge: 86400, path: "/" }) 
       }
       return res
     },

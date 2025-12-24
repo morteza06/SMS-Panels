@@ -1,4 +1,4 @@
-// old name is proxy
+// old name is proxy ==Now concept is Api Client
 
 export async function apiClient<T>(
   url: string,
@@ -14,7 +14,7 @@ export async function apiClient<T>(
       ...options,
     }
   )
-
+  console.log("run apiClient")
   if (!res.ok) {
     const message = await res.text()
     throw new Error(message || "API Error")
