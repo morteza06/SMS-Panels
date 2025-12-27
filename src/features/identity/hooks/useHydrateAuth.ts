@@ -15,7 +15,7 @@ export const useHydrateAuth = () => {
             setAuth({
                 accessToken,
                 refreshToken,
-                isAuthenticated: true,
+                // isAuthenticated: true,
             })
         }
     }, [setAuth])

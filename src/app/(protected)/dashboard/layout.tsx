@@ -1,15 +1,22 @@
 'use client'
 import Sidebar from '@/components/layout/dashboard/Sidebar'
 import Header from  '@/components/layout/dashboard/Header'
-import { useAuthGuard } from '@/features/identity/hooks/useAuthGuard'
+import { useEffect } from 'react'
+import { useRouter } from "next/navigation"
+import { useAuthStore } from "@/features/identity/store/auth.store"
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
+  const router = useRouter()
+  const accessToken = useAuthStore((s) => s.accessToken)
 
- const { loading } = useAuthGuard()
+  useEffect(() => {
+    if (!accessToken) {
+      router.replace("/login")
+    }
+  }, [accessToken, router])
 
-  if (loading) {
-    return <div>Checking authorization...</div>
-  }
+  if (!accessToken) return <div>Loading...</div>
+
 
   return (   
     <>

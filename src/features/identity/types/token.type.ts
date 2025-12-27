@@ -6,3 +6,8 @@ export interface RefreshTokenResponse {
   access_Token: string
   refresh_Token: string
 }
+
+export interface TokenPair {
+  accessToken: string
+  refreshToken: string
+}

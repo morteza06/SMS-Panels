@@ -11,10 +11,14 @@ import { LoginPayload, LoginResponse } from "../types/login.types"
 export const loginApi = async (
   payload: LoginPayload
 ): Promise<LoginResponse> => {
-  const response = await apiClient.post<LoginResponse>(
+  const { data } = await apiClient.post(
     "/api/Identity/Login",
     payload
   )
 
-  return response.data
+  return {
+    ...data,
+    accessToken: data.access_Token,
+    refreshToken: data.refresh_Token,
+  }
 }

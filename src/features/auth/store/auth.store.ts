@@ -1,38 +1,33 @@
 import { create } from "zustand"
 
 interface AuthState {
-    isAuthenticated: boolean
-    userName: string | null
-    fullName: string | null
-    roles: string[] | null
-    accessToken: string | null
-    refreshToken: string | null
+  accessToken: string | null
+  refreshToken: string | null
+  roles?: string[]
+  setAuth: (tokens: {
+    accessToken: string
+    refreshToken?: string
+    roles?: string
+  }) => void
 
-    setAuth: (data: Partial<AuthState>) => void
-    logout: () => void
+  clearAuth: () => void
 }
 
 export const useAuthStore = create<AuthState>((set) => ({
-    isAuthenticated: false,
-    userName: null,
-    fullName: null,
-    roles: null,
-    accessToken: null,
-    refreshToken: null,
+  accessToken: null,
+  refreshToken: null,
 
-    setAuth: (data) =>
+    setAuth: ({ accessToken, refreshToken }) =>
         set({
-        ...data,
-        isAuthenticated: true,
+        accessToken,
+        refreshToken: refreshToken ?? null,
         }),
 
-    logout: () =>
+    clearAuth: () => {
+        console.log("🔴 clearAuth called")
         set({
-        isAuthenticated: false,
-        userName: null,
-        fullName: null,
-        roles: null,
-        accessToken: null,
-        refreshToken: null,
-        }),
+            accessToken: null,
+            refreshToken: null,
+        })
+    },
 }))

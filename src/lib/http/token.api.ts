@@ -9,12 +9,12 @@ export const refreshTokenApi = (refreshToken: string ) =>
   apiClient.post<RefreshTokenResponse>(
     "/api/Token/refreshToken",
     { refresh_Token: refreshToken},
-    { withCredentials: true}
+    { withCredentials: false}
 )
 
 export const revokeTokenApi = (token: string) =>
   apiClient.post(
     "/api/Token/revokeToken", 
     { token },
-    { withCredentials: true }
+    { withCredentials: false }
 )

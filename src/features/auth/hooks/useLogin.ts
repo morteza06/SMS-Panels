@@ -26,11 +26,9 @@ export function useLogin() {
       Cookies.set("refresh_token", data.refresh_Token, { path: "/" })
 
       setAuth({
-        userName: data.userName,
-        fullName: data.fullName, // ← دقت کن N بزرگ
-        roles: data.roles,
         accessToken: data.access_Token,
         refreshToken: data.refresh_Token,
+        roles: response.roles || []
       })
     }
   })

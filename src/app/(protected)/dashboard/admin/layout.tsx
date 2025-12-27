@@ -1,21 +1,15 @@
 "use client"
 
 import { useRoleGuard } from "@/features/identity/hooks/useRoleGuard"
-import { authorizeAdmin } from "@/features/identity/api/authorize-role.api"
 
-export default function AdminLayout({
-  children,
-}: {
-  children: React.ReactNode
-}) {
-  // wrapper برای تبدیل نوع
-  const { loading } = useRoleGuard(async () => {
-    await authorizeAdmin() // برگشت AxiosResponse
-    return // void
-  })
+export default function AdminLayout({ children }: { children: React.ReactNode }) {
+  // فقط نقش admin اجازه دارد
+  useRoleGuard(["admin"])
 
-  if (loading) return <div>Checking admin access...</div>
-
-  return <>{children}</>
+  return (
+    <div className="p-4">
+      <h1>Admin Dashboard</h1>
+      {children}
+    </div>
+  )
 }
-

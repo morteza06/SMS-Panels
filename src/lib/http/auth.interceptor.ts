@@ -1,57 +1,126 @@
-import type { AxiosError, AxiosInstance, InternalAxiosRequestConfig } from "axios"
-import { refreshTokenApi, revokeTokenApi } from "./token.api"
+import type {
+  AxiosError,
+  AxiosInstance,
+  AxiosResponse,
+  InternalAxiosRequestConfig,
+} from "axios"
 import { useAuthStore } from "@/features/identity/store/auth.store"
+import { refreshTokenApi } from "@/features/identity/api/refresh.api"
+import type { RefreshResponse } from "@/features/identity/api/refresh.api"
+import { apiClient } from "./apiClient"
 
-interface RetryConfig extends InternalAxiosRequestConfig {
-  _retry?: boolean
-}
+/**
+ * URLs that MUST NOT receive Authorization header
+ */
+const AUTH_EXCLUDED_URLS = ["/Identity/Login", "/Identity/RefreshToken"]
 
-export const setupAuthInterceptor = (api: AxiosInstance) => {
-  // Request: attach access token
-  api.interceptors.request.use((config) => {
-    const token = useAuthStore.getState().accessToken
+export const setupAuthInterceptor = (client: AxiosInstance) => {
+  /**
+   * =========================
+   * Request Interceptor
+   * =========================
+   */
+  client.interceptors.request.use(
+    (config: InternalAxiosRequestConfig) => {
+      const url = config.url ?? ""
 
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`
+      const isExcluded = AUTH_EXCLUDED_URLS.some((path) =>
+        url.includes(path)
+      )
+
+      if (isExcluded) {
+        console.log("⛔ Skip auth header for", url)
+        return config
+      }
+
+      const accessToken = useAuthStore.getState().accessToken
+
+      if (accessToken) {
+        config.headers.Authorization = `Bearer ${accessToken}`
+      }
+
+      console.log("📤 Request interceptor", {
+        url,
+        hasToken: !!accessToken,
+      })
+
+      return config
+    },
+    (error: AxiosError) => {
+      return Promise.reject(error)
     }
+  )
 
-    return config
-  })
+  /**
+   * =========================
+   * Response Interceptor
+   * =========================
+   */
+  let isRefreshing = false
+  let refreshPromise: Promise<string> | null = null
 
-  // Response: handle 401
-  api.interceptors.response.use(
-    (response) => response,
+  client.interceptors.response.use(
+    (response: AxiosResponse) => {
+      console.log("📥 Response OK", response.config.url)
+      return response
+    },
     async (error: AxiosError) => {
-      const originalRequest = error.config as RetryConfig
-      const authStore = useAuthStore.getState()
+      const status = error.response?.status
+      const originalRequest = error.config as InternalAxiosRequestConfig & {
+        _retry?: boolean
+      }
 
-      if (
-        error.response?.status === 401 &&
-        !originalRequest._retry &&
-        authStore.refreshToken
-      ) {
+      // Example: future refresh-token logic placeholder
+      if (status === 401 && !originalRequest._retry) {
         originalRequest._retry = true
+        console.warn("🔁 401 detected (refresh flow can be added here)")
+        client.interceptors.response.use(
+            (response) => response,
 
-        try {
-          const res = await refreshTokenApi(authStore.refreshToken)
+            async (error) => {
+              const originalRequest = error.config
 
-          authStore.setAuth({
-            accessToken: res.data.access_Token,
-            refreshToken: res.data.refresh_Token,
-          })
+              if (
+                error.response?.status !== 401 ||
+                originalRequest._retry
+              ) {
+                return Promise.reject(error)
+              }
 
-          originalRequest.headers.Authorization = `Bearer ${res.data.access_Token}`
+              originalRequest._retry = true
 
-          return api(originalRequest)
-        } catch {
-          // refresh failed → revoke + logout
-          if (authStore.refreshToken) {
-            await revokeTokenApi(authStore.refreshToken)
-          }
+              if (!isRefreshing) {
+                isRefreshing = true
 
-          authStore.clearAuth()
-          window.location.href = "/login"
-        }
+                refreshPromise = refreshTokenApi()
+                  .then((res: RefreshResponse) => {
+                    useAuthStore.getState().setAuth({
+                      accessToken: res.access_Token,
+                      refreshToken: res.refresh_Token,
+                    })
+
+                    return res.access_Token
+                  })
+                  .catch(() => {
+                    useAuthStore.getState().clearAuth()
+                    window.location.href = "/login"
+                    throw error
+                  })
+                  .finally(() => {
+                    isRefreshing = false
+                    refreshPromise = null
+                  })
+              }
+
+              const newAccessToken = await refreshPromise
+
+              originalRequest.headers.Authorization =
+                `Bearer ${newAccessToken}`
+
+              return apiClient(originalRequest)
+            }
+          )
+
       }
 
       return Promise.reject(error)

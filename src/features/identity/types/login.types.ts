@@ -8,7 +8,7 @@ export interface LoginResponse {
   errorMessage: string | null
   userName: string
   fullName: string
-  access_Token: string
-  refresh_Token: string
+  accessToken: string
+  refreshToken: string
   roles: string[] | null
 }
